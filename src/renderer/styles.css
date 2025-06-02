@@ -1,0 +1,16 @@
+.app-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
+  font-family: Arial, sans-serif;
+}
+svg {
+  border: 1px solid #ccc;
+  cursor: crosshair;
+  background-color: #fff;
+}
+text {
+  font-size: 14px;
+  font-weight: bold;
+}

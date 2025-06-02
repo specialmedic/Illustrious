@@ -1,0 +1,37 @@
+{
+  "name": "illustrious",
+  "version": "1.0.0",
+  "description": "ChemDraw-like editor built with Electron, React, and TypeScript",
+  "main": "dist/main/main.js",
+  "scripts": {
+    "build-renderer": "webpack --config webpack.config.js --mode=development",
+    "build-main": "tsc -p tsconfig.main.json",
+    "build": "npm run build-renderer && npm run build-main",
+    "start": "npm run build && electron .",
+    "pack": "webpack --config webpack.config.js --mode=production"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "electron": "^25.0.0",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.0.0",
+    "@babel/preset-env": "^7.0.0",
+    "@babel/preset-react": "^7.0.0",
+    "@types/react": "^18.0.0",
+    "@types/react-dom": "^18.0.0",
+    "babel-loader": "^8.0.0",
+    "css-loader": "^7.1.2",
+    "html-webpack-plugin": "^5.0.0",
+    "style-loader": "^4.0.0",
+    "ts-loader": "^9.0.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^4.9.5",
+    "webpack": "^5.0.0",
+    "webpack-cli": "^4.0.0"
+  }
+}
