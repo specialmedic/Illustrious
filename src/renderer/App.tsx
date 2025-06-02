@@ -78,6 +78,7 @@ const App: React.FC = () => {
       });
       if (!clickedAtom) {
         const id = generateId("atom");
+        // Always place as carbon; renderer will handle how to display.
         const newAtom: Atom = { id, x, y, element };
         setMolecule(prev => ({
           atoms: { ...prev.atoms, [id]: newAtom },
