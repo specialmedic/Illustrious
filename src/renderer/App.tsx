@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import MoleculeCanvas from "./components/MoleculeCanvas";
 import Toolbar from "./components/Toolbar";
 import { Molecule, Atom, Bond } from "./model";
@@ -67,6 +67,16 @@ const App: React.FC = () => {
   const [bondType, setBondType] = useState<BondType>("single");
   const [dragStartAtomId, setDragStartAtomId] = useState<string | null>(null);
   const [dragPos, setDragPos] = useState<{ x: number, y: number } | null>(null);
+
+  // Ensure dragging stops when mouse is released anywhere
+  useEffect(() => {
+    const handleUp = () => {
+      setDragStartAtomId(null);
+      setDragPos(null);
+    };
+    window.addEventListener("mouseup", handleUp);
+    return () => window.removeEventListener("mouseup", handleUp);
+  }, []);
 
   // Free-field click: add an atom
   function handleCanvasClick(x: number, y: number) {
