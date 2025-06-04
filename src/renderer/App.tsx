@@ -26,33 +26,39 @@ function getNextBondAngle(atom: Atom, molecule: Molecule): number {
   ) as Bond[];
   if (bonds.length === 0) return 0; // Default to horizontal (right)
 
-  // If only one bond, extend in opposite direction (straight chain)
-  if (bonds.length === 1) {
-    const otherId = bonds[0].beginAtomId === atom.id ? bonds[0].endAtomId : bonds[0].beginAtomId;
-    const otherAtom = molecule.atoms[otherId];
-    if (!otherAtom) return 0;
-    return Math.atan2(atom.y - otherAtom.y, atom.x - otherAtom.x);
-  }
-  // If more than one bond, find a free "spoke" at 120° intervals
-  const angles = bonds.map(bond => {
-    const otherId = bond.beginAtomId === atom.id ? bond.endAtomId : bond.beginAtomId;
-    const otherAtom = molecule.atoms[otherId];
-    return otherAtom ? Math.atan2(otherAtom.y - atom.y, otherAtom.x - atom.x) : 0;
+  const existingAngles = bonds.map(b => {
+    const otherId = b.beginAtomId === atom.id ? b.endAtomId : b.beginAtomId;
+    const other = molecule.atoms[otherId];
+    return other ? Math.atan2(other.y - atom.y, other.x - atom.x) : 0;
   });
-  // Find the largest gap between angles (naive, but works for typical use)
+
+  // Special case for a single existing bond: grow at ~120° to create zig-zag
+  if (existingAngles.length === 1) {
+    const base = existingAngles[0];
+    const offset = (2 * Math.PI) / 3; // 120°
+    const candidate1 = base + offset;
+    const candidate2 = base - offset;
+    // Choose the option that gives larger vertical component for nicer zig-zag
+    return Math.abs(Math.sin(candidate1)) > Math.abs(Math.sin(candidate2))
+      ? candidate1
+      : candidate2;
+  }
+
+  // Otherwise, find the angle that maximizes distance from existing bonds
   let bestAngle = 0;
-  let maxGap = 0;
-  const sortedAngles = angles.slice().sort((a, b) => a - b);
-  for (let i = 0; i < sortedAngles.length; ++i) {
-    const a1 = sortedAngles[i];
-    const a2 = sortedAngles[(i + 1) % sortedAngles.length] + (i + 1 === sortedAngles.length ? 2 * Math.PI : 0);
-    let diff = a2 - a1;
-    if (diff > maxGap) {
-      maxGap = diff;
-      bestAngle = a1 + diff / 2;
+  let bestDist = -1;
+  for (let a = 0; a < 2 * Math.PI; a += 0.01) {
+    let minDist = Infinity;
+    for (const used of existingAngles) {
+      const diff = Math.abs(Math.atan2(Math.sin(a - used), Math.cos(a - used)));
+      if (diff < minDist) minDist = diff;
+    }
+    if (minDist > bestDist) {
+      bestDist = minDist;
+      bestAngle = a;
     }
   }
-  return bestAngle % (2 * Math.PI);
+  return bestAngle;
 }
 
 const App: React.FC = () => {
