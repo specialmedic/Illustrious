@@ -252,7 +252,7 @@ const MoleculeCanvas: React.FC<MoleculeCanvasProps> = ({
               }
             }}
             onMouseUp={e => {
-              if (onAtomMouseUp) {
+              if (onAtomMouseUp && dragStartAtomId === atom.id) {
                 const { x, y } = getRelativeCoords(e as any);
                 onAtomMouseUp(atom.id, x, y);
                 e.stopPropagation();
