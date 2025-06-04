@@ -6,12 +6,12 @@
 
 ## Features
 
-- **Click-to-grow and click-and-drag** for rapid molecule sketching (like ChemDraw or MarvinSketch)
+- **Click-to-grow and click-and-drag** for rapid molecule sketching
 - **Atoms and bonds:** Add carbons (C), heteroatoms (N, O, S, P, Cl, Br, I, F, H, etc.)
 - **Smart bond angles:** Automatic bond geometry when click-to-grow employed, fixed bond length, and implicit hydrogens
 - **Valence enforcement:** No overfilled atoms; valence logic for every element
 - **Bond preview & eraser tool**
-- **Modern, cross-platform desktop app**—no browser required!
+- **Modern, cross-platform desktop app**—no browser required
 
 ---
 
@@ -67,7 +67,7 @@
 - Main React components are in `/src/renderer/`
 - Electron main process in `/src/main/`
 - Toolbar, canvas, and event logic are in `/src/renderer/components/`
-- Styles are in `styles.css` (edit as you like!)
+- Styles are in `styles.css` (edit as you like)
 
 **To restart after code changes:**  
 ```bash
