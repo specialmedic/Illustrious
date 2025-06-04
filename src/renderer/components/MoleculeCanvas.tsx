@@ -1,5 +1,5 @@
 import React, { useRef } from "react";
-import { Molecule, Atom, Bond } from "../model";
+import { Molecule, Atom, Bond, BondOrder } from "../model";
 
 export interface MoleculeCanvasProps {
   molecule: Molecule;
@@ -13,7 +13,80 @@ export interface MoleculeCanvasProps {
   dragPos?: { x: number, y: number } | null;
 }
 
-// ...all your rendering/label logic unchanged...
+const CLICK_RADIUS = 12;
+
+function getAtomBondCount(atom: Atom, molecule: Molecule): number {
+  return Object.values(molecule.bonds as Record<string, Bond>).reduce(
+    (sum, b) =>
+      b.beginAtomId === atom.id || b.endAtomId === atom.id ? sum + b.order : sum,
+    0
+  );
+}
+
+function renderBondLines(a1: Atom, a2: Atom, order: BondOrder): JSX.Element[] {
+  const dx = a2.x - a1.x;
+  const dy = a2.y - a1.y;
+  const len = Math.hypot(dx, dy) || 1;
+  const offsetX = (-dy / len) * 4;
+  const offsetY = (dx / len) * 4;
+
+  const lines: JSX.Element[] = [];
+  const baseProps = { stroke: 'black', strokeWidth: 2 };
+
+  if (order === 1) {
+    lines.push(
+      <line key="s" x1={a1.x} y1={a1.y} x2={a2.x} y2={a2.y} {...baseProps} />
+    );
+  } else if (order === 2) {
+    lines.push(
+      <line
+        key="d1"
+        x1={a1.x + offsetX}
+        y1={a1.y + offsetY}
+        x2={a2.x + offsetX}
+        y2={a2.y + offsetY}
+        {...baseProps}
+      />
+    );
+    lines.push(
+      <line
+        key="d2"
+        x1={a1.x - offsetX}
+        y1={a1.y - offsetY}
+        x2={a2.x - offsetX}
+        y2={a2.y - offsetY}
+        {...baseProps}
+      />
+    );
+  } else {
+    lines.push(
+      <line
+        key="t1"
+        x1={a1.x + offsetX}
+        y1={a1.y + offsetY}
+        x2={a2.x + offsetX}
+        y2={a2.y + offsetY}
+        {...baseProps}
+      />
+    );
+    lines.push(
+      <line key="t2" x1={a1.x} y1={a1.y} x2={a2.x} y2={a2.y} {...baseProps} />
+    );
+    lines.push(
+      <line
+        key="t3"
+        x1={a1.x - offsetX}
+        y1={a1.y - offsetY}
+        x2={a2.x - offsetX}
+        y2={a2.y - offsetY}
+        {...baseProps}
+      />
+    );
+  }
+
+  return lines;
+}
+
 
 const MoleculeCanvas: React.FC<MoleculeCanvasProps> = ({
   molecule,
@@ -64,7 +137,7 @@ const MoleculeCanvas: React.FC<MoleculeCanvasProps> = ({
   const a1 = molecule.atoms[bond.beginAtomId];
   const a2 = molecule.atoms[bond.endAtomId];
   if (!a1 || !a2) return null;
-  return renderBondLines(a1, a2, bond.order, bond, molecule);
+  return renderBondLines(a1, a2, bond.order);
 })}
 
 {/* Drag preview for bond drawing */}
@@ -210,8 +283,7 @@ const MoleculeCanvas: React.FC<MoleculeCanvasProps> = ({
     </g>
   );
 })}
-main
-    </svg>
+</svg>
   );
 };
 
