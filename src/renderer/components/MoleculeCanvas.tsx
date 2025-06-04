@@ -180,6 +180,10 @@ const MoleculeCanvas: React.FC<MoleculeCanvasProps> = ({
           e.stopPropagation();
         }
       }}
+      onClick={e => {
+        // Prevent canvas click from firing when making bonds
+        e.stopPropagation();
+      }}
       style={{ cursor: "pointer" }}
     >
       {/* Transparent clickable region for all atoms */}
